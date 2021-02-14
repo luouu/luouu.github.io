@@ -1,0 +1,95 @@
+# Site settings
+title: Gityuan
+SEOTitle: Gityuan博客 | 袁辉辉的技术博客
+#header-img: img/nav-home.jpg
+email: gityuan@gmail.com
+description: "袁辉辉, Gityuan, Android博客, Android源码, Flutter博客，Flutter源码"
+keyword: "袁辉辉, Gityuan, Android博客, Android源码, Flutter博客，Flutter源码"
+url: "http://gityuan.com"              # your host, for absolute URL
+baseurl: ""                             # for example, '/blog' if your blog hosted on 'host/blog'
+
+
+# SNS settings
+RSS: true
+weibo_username:     gityuan
+zhihu_username:     gityuan
+linkedin_username:  gityuan
+#google_userId:   101388994961262711072
+#github_username:    yuanhuihui
+#twitter_username:  gityuan
+
+
+
+# Build settings
+# from 2016, 'pygments' is unsupported on GitHub Pages. Use 'rouge' for highlighting instead.
+highlighter: rouge
+permalink: /:year/:month/:day/:title/
+paginate: 15
+paginate_path: "page:num"
+
+exclude: ["less","node_modules","Gruntfile.js","package.json","README.md","README.zh.md"]
+anchorjs: true                          # if you want to customize anchor. check out line:181 of `post.html`
+
+# Gems
+# from PR#40, to support local preview for Jekyll 3.0
+gems: [jekyll-paginate]
+
+# Markdown settings
+# replace redcarpet to kramdown,
+# although redcarpet can auto highlight code, the lack of header-id make the catalog impossible, so I switch to kramdown
+# document: http://jekyllrb.com/docs/configuration/#kramdown
+markdown: kramdown
+kramdown:
+  input: GFM                            # use Github Flavored Markdown !important
+
+
+
+# Disqus settings
+#disqus_username: _your_disqus_short_name_
+# valine comment settings
+valine_comment.enable: true
+
+# Duoshuo settings
+duoshuo_username: gityuan
+# Share component is depend on Comment so we can NOT use share only.
+duoshuo_share: false                     # set to false if you want to use Comment without Sharing
+
+
+# Sidebar settings
+sidebar: true                           # whether or not using Sidebar.
+#sidebar-about-description: "Gityuan"
+sidebar-avatar: /images/about-me/gityuan_weixin_logo_raw.jpg
+
+
+
+# Featured Tags
+featured-tags: true                     # whether or not using Feature-Tags
+featured-condition-size: 0              # A tag will be featured if the size of it is more than this condition value
+
+
+# hotpages
+hotpages: [
+    {
+        title: "Android 操作系统架构开篇    ",
+        href:  "http://gityuan.com/android"
+    }, {
+        title: "Flutter 跨平台演进及架构开篇",
+        href:  "http://gityuan.com/flutter"
+
+    },{
+        title: "Binder系列开篇",
+        href:  "http://gityuan.com/2015/10/31/binder-prepare/"
+    },{
+      title: "彻底理解Android Binder通信架构",
+      href:  "http://gityuan.com/2016/09/04/binder-start-service/"
+    },{
+        title: "如何自学 Android   ",
+        href:  "http://gityuan.com/2016/04/24/how-to-study-android/"
+    }
+]
+
+#money settings
+
+#money-alipay: /images/about-me/
+#money-weixin: /images/about-me/
+money-description: 如果博客对您有所帮助，请打赏支持或者分享给更多朋友，您的支持与认可将鼓励我坚持不懈的创作，谢谢您！
