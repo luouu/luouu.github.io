@@ -1,0 +1,9 @@
+_site/
+_drafts/
+*.sw[po]
+*.~vsd
+\#*\#
+*~
+.DS_Store
+Gemfile.lock
+.vscode/
