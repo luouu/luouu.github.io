@@ -11,7 +11,23 @@ layout: default
   <div class="columns">
     <div class="column three-fourths">
       <div class="collection-title">
-        <h1 class="collection-header">{{ page.title }}</h1>
+        {% if page.cmd %}
+          <div class="collection-info">
+            <span class="meta-info">
+              {{ page.title}}
+            </span>
+          </div>
+          <h1 class="collection-header">{{ page.cmd }}</h1>
+        {% else %}
+          {% if page.subtitle %}
+          <h1 class="collection-header">{{ page.title }}</h1>
+          <div class="collection-info">
+            <span class="meta-info">
+              {{ page.subtitle}}
+            </span>
+          </div>
+          {% endif %}
+        {% endif %}
       </div>
     </div>
     <div class="column one-fourths mobile-hidden">
@@ -20,22 +36,19 @@ layout: default
   </div>
 </div>
 </section>
-<!-- / .banner -->
+
+
 <section class="container content">
 <div class="columns">
   <div class="column three-fourths" >
     {% include content-header-ad.html %}
     <article class="article-content markdown-body">
     {{ content }}
-    {% include copyright.html %}
     </article>
     <div class="share">
       {% include sns-share.html %}
     </div>
     {% include content-footer-ad.html %}
-    <div class="comment">
-      {% include comments.html %}
-    </div>
   </div>
   <div class="column one-fourth">
     {% include sidebar-search.html %}
@@ -43,4 +56,4 @@ layout: default
   </div>
 </div>
 </section>
-<!-- /section.content -->
+

@@ -57,27 +57,19 @@ email: luo_u@qq.com
 navs:
   -
     href: /
-    label: 首页
+    label: 博客
 
   -
     href: /categories/
     label: 分类
 
-#   -
-#     href: /archives/
-#     label: 归档
-
-#   -
-#     href: /open-source/
-#     label: 开源
+  -
+    href: /cmd/
+    label: linux命令
 
   -
-    href: /wiki/
-    label: wiki
-
-#   -
-#     href: /links/
-#     label: 链接
+    href: /res/
+    label: 资源
 
   -
     href: /about/
@@ -111,9 +103,13 @@ plugins_dir:
 #     - jekyll-mentions
 
 collections:
-    wiki:
+    cmd:
         output: true
-        permalink: /wiki/:path/
+        permalink: /cmd/:path/
+
+    tool:
+        output: true
+        permalink: /tool/:path/
 
 # ---------------- #
 #      Comments    #

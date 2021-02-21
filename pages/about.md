@@ -1,14 +1,12 @@
 ---
-layout: page
+layout: info
 title: About
 description: 曾梦想仗剑天涯，后来工作忙没去
-keywords: Jiucheng Ji, 苜蓿鬼仙
+keywords: 
 comments: true
 menu: 关于
 permalink: /about/
 ---
-
-曾梦想仗剑天涯，后来工作忙没去！
 
 ## 联系方式
 
@@ -20,7 +18,7 @@ permalink: /about/
 
 {% for category in site.data.skills %}
 
-<!-- ### {{ category.name }} -->
+
 <div class="btn-inline">
 {% for keyword in category.keywords %}
 <button class="btn btn-outline" type="button">{{ keyword }}</button>
