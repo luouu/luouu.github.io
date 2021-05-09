@@ -1,10 +1,6 @@
 ---
 layout: cmd
-title: linux命令
 cmd: cat
-categories: 
-description: 
-keywords: 
 topmost: false
 ---
 
@@ -47,21 +43,11 @@ FILE（可选）：要处理的文件，可以为一或多个。
 
 返回状态为成功除非给出了非法选项或非法参数。
 
-## 例子
+## 实例
 
 ```shell
-# 合并显示多个文件
-cat ./1.log ./2.log ./3.log
-# 显示文件中的非打印字符、tab、换行符
-cat -A test.log
-# 压缩文件的空行
-cat -s test.log
-# 显示文件并在所有行开头附加行号
-cat -n test.log
-# 显示文件并在所有非空行开头附加行号
-cat -b test.log
-# 将标准输入的内容和文件内容一并显示
-echo '######' |cat - test.log
+# 将标准输入保存到文件
+cat > test.log
 ```
 
 ## 注意

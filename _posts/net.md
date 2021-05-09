@@ -1,0 +1,361 @@
+
+
+[TOC]
+## TCP/IP模型 
+TCP/IP协议模型（Transmission Control Protocol/Internet Protocol），包含了一系列构成互联网基础的网络协议，是Internet的核心协议。
+
+![img](.img/net/tcp-ip-arch.webp)
+
+### 应用层
+负责应用程序的网络访问，这里通过端口号来识别各个不同的进程。
+
+### 传输层
+负责端对端之间的通信会话连接与建立。传输协议的选择根据数据传输方式而定。
+
+
+### 网络层
+负责将数据帧封装成IP数据包，并运行必要的路由算法。
+
+### 网络接口层 
+负责将二进制流转换为数据帧，把网络层数据报加头和尾，封装成帧，帧头中包括源MAC地址和目的MAC地址。并进行数据帧的发送和接收。要注意的是数据帧是独立的网络信息传输单元。
+
+差错检测(CRC)，如果接收者检测发现差错，丢弃该帧。
+
+![img](.img/net/tcp_module.jpg)
+
+TCP/IP 协议族：
+- ARP(Address Resolution Protocol)用于根据IP地址查询相应的以太网MAC地址。
+- MPLS  多协议标签协议。
+- IP(Internet Protocol)负责在主机和网络之间寻址和路由数据包。
+- ICMP(Internet Control Message Protocol)用于发送有关数据包的传送错误的协议。
+- IGMP  被IP主机用来向本地多路广播路由器报告主机组成员的协议。
+- TCP(Transmisson Control Protocol)为应用程序提供可靠的通信连接。适合于一次传输大批数据的情况，并适用于要求得到响应的应用程序。
+- UDP(User Datagram Protocol)提供了无连接通信，且不对传送包进行可靠性保证。适合于一次传输少量数据，可靠性则由应用层来负责。
+
+![tcp_ip_pack](.img/net/tcp_ip_pack.bmp)
+
+## IP
+IP地址是一串32bit的数字，按照8bit为1组分成4组，分别用十进制表示然后再用圆点隔开。子网掩码也是32bit，为1的部分表示网络号，子网掩码为0的部分表示主机号。主机号部分全部为0代表整个子网，主机号部分全部为1代表广播地址，向子网上所有设备发送包。
+
+![ip_name](.img/net/ip_name.png)
+
+本地回环地址127.0.0.1指的是本机地址，等效于localhost或本机IP。不会跟着网络情况的变化而变化。它代表设备的本地虚拟接口，所以默认被看作是永远不会宕掉的接口。127.0.0.1 ~ 127.255.255.254范围都是本地回环地址。作用是测试本机的网络配置，能ping通说明本机网络协议正常。
+
+![ip_name](.img/net/ip_class.webp)
+IP 地址分为A类、B类、C类、D类、E类，保留3个区域作为私有地址，这些地址属于公有地址中还没有分配的范围。 
+- A类地址：10.0.0.0～10.255.255.255 
+- B类地址：172.16.0.0～172.31.255.255 
+- C类地址：192.168.0.0～192.168.255.255
+
+IP 模块会添加 IP 头部和 MAC 头部这两种头部。IP 头部中包含包含 IP 地址，根据 IP 地址将包发往目的地。MAC 头部是以太网协议用的头部，包含 MAC 地址。IP 协议委托以太网协议传输包。IP 协议会查找下一个路由器的MAC 地址，并将这个地址写入 MAC 头部中。这样一来，以太网协议就知道要将这个包发到哪一个路由器上了。
+
+![](.img/net/ip_head.png)
+
+IP 模块如果收错了包，会通过 ICMP 消息将错误告知发送方。
+
+
+
+## MAC
+MAC 头部是以太网使用的头部,它包含了接收方和发送方的 MAC 地址等信息。
+![](.img/net/mac_head.png)
+
+MAC 地址是在网卡生产时写入 ROM 里的，网卡驱动程序读取并分配给 MAC模块。通过 ARP 可以查询目标路由器的 MAC 地址。
+
+网卡驱动从 IP 模块获取包之后,会将其复制到网卡内的缓冲区中，然后向MAC 模块发送发送包的命令。MAC 模块会将包从缓冲区中取出，并在开头加上报头和起始帧分界符，在末尾加上用于检测错误的帧校验序列。再将数字信息按每个比特转换成电信号，然后由 PHY信号收发模块发送出去。
+
+![](.img/net/pack.png)
+
+
+```shell
+# 修改MAC地址
+ifconfig eth0 hw ether 12:34:56:78:90:12
+```
+
+
+
+## socket
+套接字用一个相关描述{协议、本地地址、本地端口、远程地址、远程端口}来表示。连接时指定IP地址和端口号，才能明确识别某个具体的套接字。套接字中记录了用于控制通信操作的各种控制信息，协议栈需要根据这些信息来工作。在Windows中可以用`netstat -ano`命令显示套接字内容。套接字有3种类型：
+
+- 流式套接字提供可靠的、面向连接的通信流，使用TCP协议，从而保证了数据传输的正确性和顺序性。
+- 数据报套接字定义了一种无连接的服务，使用UDP协议，数据通过相互独立的报文进行传输,是无序的,并且不保证是可靠、无差错的。
+- 原始套接字允许对底层协议如IP或ICMP进行直接访问。
+
+描述符是应用程序用来识别套接字的机制，IP 地址和端口号是客户端和服务器之间用来识别对方套接字的机制。
+
+
+
+## TCP
+- TCP 提供一种面向连接的、可靠的字节流服务
+- 在一个 TCP 连接中，仅有两方进行彼此通信。广播和多播不能用于 TCP
+- TCP 使用校验和，确认和重传机制来保证可靠传输
+- TCP 给数据分节进行排序，并使用累积确认保证数据的顺序不变和非重复
+- TCP 使用滑动窗口机制来实现流量控制，通过动态改变窗口的大小进行拥塞控制
+
+应用程序通过打开一个socket 来使用TCP服务，TCP管理socket 的数据传递。连接操作的第一步是在 TCP 模块处创建表示连接控制信息的头部。当 TCP 头部创建好之后， TCP 模块会将信息传递给 IP 模块并委托它发送 给服务器 。服务器根据TCP 头部中的发送方和接收方端口号可以找到要连接的套接字。
+
+![tcp_head](.img/net/tcp_head.png)
+
+![tcp_link](.img/net/tcp_link.png)
+
+MTU 表示一个网络包的最大长度，在以太网中一般是 1500 字节。MTU 是包含头部的总长度，因此需要从MTU 减去头部的长度，然后得到的长度就是一个网络包中所能容纳的最大数据长度，这一长度叫作 MSS。当发送缓冲区中的数据长度超过MSS，或内部定时器超时，才会把包发出去。
+![](.img/net/mss.png)
+
+```shell
+# 查看MTU值
+cat /sys/class/net/eth0/mtu
+
+# 修改MTU值
+echo "1400" > /sys/class/net/eth0/mtu
+```
+
+
+
+### 三次握手
+
+TCP协议提供可靠的连接服务，无论哪一方向另一方发送数据之前，都必须先在双方之间建立一条连接。连接是通过三次握手进行初始化的。三次握手的目的是连接服务器指定端口，建立 TCP 连接，并同步连接双方的序列号和确认号，交换 TCP 窗口大小信息。在 socket 编程中，客户端执行 `connect()` 时。将触发三次握手。
+
+![tcp-link3](.img/net/tcp-link3.jpg)
+
+- 第一次握手(SYN=1, seq=x):
+
+客户端发送连接请求报文段，将SYN位置为1，指明客户端的初始序号ISN，放在包头的序列号(Sequence Number)字段里。
+
+发送完毕后，客户端进入SYN_SEND状态，等待服务器的确认。
+
+- 第二次握手(SYN=1, ACK=1, seq=y, ack=x+1):
+
+服务器收到客户端的 SYN 报文之后，会以自己的 SYN 报文作为应答，并且也是指定了自己的初始化序列号 ISN。同时会把客户端的 ISN + 1 作为ACK 的值，表示自己已经收到了客户端的 SYN。
+
+ 发送完毕后，服务器端进入SYN_RCVD状态。
+
+- 第三次握手(ACK=1，seq=x+1，ack=y+1)
+
+客户端收到 SYN 报文之后，会发送一个 ACK 报文，自身序列号+1，把服务器的 ISN + 1 作为 ACK 的值，表示已经收到了服务端的 SYN 报文。
+
+  发送完毕后，客户端进入 ESTABLISHED状态，当服务器端接收到这个包时，也进入 `ESTABLISHED` 状态，TCP三次握手结束。
+
+#### 四次挥手
+
+TCP 的连接的断开需要发送四个包，因此称为四次挥手。客户端或服务器均可主动发起挥手动作，在 socket 编程中，任何一方执行 close() 操作即可产生挥手操作。
+
+![tcp-unlink4](.img/net/tcp-unlink4.jpg)
+
+- 第一次挥手(FIN=1, seq=u)
+
+  假设客户端想要关闭连接，客户端发送一个 FIN 标志位置为1的包，设置序列号，表示自己已经没有数据可以发送了，但是仍然可以接受数据。
+
+  发送完毕后，客户端进入FIN_WAIT1（终止等待1）状态，等待服务端的确认。
+
+- 第二次挥手(ACK=1, seq=v, ack=u+1)
+
+  服务端收到 FIN 之后，回一个ACK确认包，并把客户端的序列号值 +1 作为 ACK 的值，表明自己接受到了客户端关闭连接的请求，但还没有准备好关闭连接。
+
+  发送完毕后，服务器端进入 CLOSE_WAIT 状态，客户端接收到这个确认包之后，进入 FIN_WAIT_2 状态，等待服务器端关闭连接。
+
+- 第三次挥手(FIN=1, ACK=1, seq=w, ack=u+1)
+
+  如果服务端也想断开连接了，向客户端发送结束连接请求，发给 FIN 报文，且指定一个序列号。
+
+  发送完毕后，服务端进入LAST_ACK（最后确认）状态，等待客户端的确认。等待来自客户端的最后一个ACK。
+
+- 第四次挥手(ACK=1, seq=u+1, ack=w+1)
+
+  客户端接收到来自服务器端的关闭请求，发送一个确认包，把服务端的序列号值+1 作为自己 ACK 的值，并进入 TIME_WAIT状态，等待可能出现的要求重传的 ACK 包。
+
+  服务器端接收到这个确认包之后，就关闭连接，进入 CLOSED 状态。
+
+  客户端等待了某个固定时间（两个最大段生命周期，2MSL，2 Maximum Segment Lifetime）之后，没有收到服务器端的 ACK ，认为服务器端已经正常关闭连接，于是自己也关闭连接，进入 CLOSED 状态。
+  
+  
+
+## UDP
+
+- UDP 缺乏可靠性。UDP 本身不提供确认，序列号，超时重传等机制。UDP 数据报可能在网络中被复制，被重新排序。即 UDP 不保证数据报会到达其最终目的地，也不保证各个数据报的先后顺序，也不保证每个数据报只到达一次
+
+- UDP 数据报是有长度的。每个 UDP 数据报都有长度，如果一个数据报正确地到达目的地，那么该数据报的长度将随数据一起传递给接收方。而 TCP 是一个字节流协议，没有任何（协议上的）记录边界。
+
+- UDP 是无连接的。UDP 客户和服务器之前不必存在长期的关系。UDP 发送数据报之前也不需要经过握手创建连接的过程。
+
+- UDP 支持多播和广播。
+
+  
+
+![](.img/net/ip_head.png)
+
+
+
+## DNS
+DNS(Domain Name System)域名服务系统。将服务器名称和IP地址进行关联。还可以关联邮件地址和邮件服务器。通过 DNS 查询 IP 地址的操作称为域名解析。
+
+查询 IP 地址时，浏览器会使用系统 Socket 库中的解析器， 向 DNS 服务器发送查询消息，然后 DNS 服务器会从域名与 IP 地址的对照表中查找相应的记录，并返回 IP 地址。客户端的查询消息包含以下 3 种信息：
+
+- 域名：服务器、邮件服务器(邮件地址中 @ 后面的部分)的名称。
+- Class：网络的信息标识。如今 Class 的值永远是代表互联网的 IN。
+- 记录类型：表示域名对应何种类型的记录。例如,当类型为 A 时，表示域名对应的是 IP 地址；当类型为 MX 时，表示域名对应的是邮件服务器。对于不同的记录类型，服务器向客户端返回的信息也会不同。
+
+![dns_msg](.img/net/dns_msg.png)
+
+
+
+## 路由器
+路由器是按照IP 协议传输包的设备，根据接收到的包的 IP 头部中记录的接收方 IP 地址，在路由表中进行查询，以此判断转发目标。windows用`route print`命令显示路由表。
+
+路由器已经集成了集线器和交换机的功能。路由器的各个端口都具有 MAC 地址和 IP 地址，只接收与自身地址匹配的包，不匹配的包则直接丢弃。通过路由器转发的网络包，其接收方 MAC 地址为路由器端口的MAC 地址。
+
+![](.img/net/route_map.png)
+
+路由器忽略主机号部分，只匹配网络号。路由表的子网掩码列只是用来在匹配目标地址时告诉路由器应该匹配多少个比特。根据目标地址和子网掩码匹配到某条记录后，路由器就会将网络包交给接口列中指定的端口，并转发到网关列中指定的 IP 地址。跃点计数表示距离目标 IP 地址的距离的远近。数字越小表示距离目的地越近；数字越大表示距离目的地越远。
+
+路由表中子网掩码为 0.0.0.0 的记录表示默认路由，这一行配置的网关地址被称为默认网关，无论任何地址都能匹配到这一条记录。
+
+路由器优先选择主机号比特数越短，跃点计数较小的记录。如果在路由表中无法找到匹配的记录，路由器会丢弃这个包，并通过ICMP 消息告知发送方 。
+
+路由器会更新 IP 头部中的 TTL字段。TTL 字段表示包的有效期，包每经过一个路由器的转发，这个值就会减 1，当这个值变成 0 时，就表示超过了有效期，这个包就会被丢弃。
+
+对于长度大于输出端口MTU的转发包，路由器会根据IP 头部中的标志字段，确认是否可以分片。如果查询标志字段发现不能分片，那么就只能丢弃这个包，并通过ICMP 消息通知发送方。在分片中，TCP 头部及其后面的部分都是可分片的数据，每一份数据前面会加上 IP 头部。
+
+路由转发和IP 模块发送包的过程是相同的，会在包前面加上 MAC 头部，也是从路由表的网关列中查找出下一个路由器的 IP 地址，如果网关是一个 IP 地址，则这个IP 地址就是我们要转发到的目标地址；如果网关为空 ，则 IP 头部中的接收方 IP 地址就是要转发到的目标地址。然后通过 ARP 根据 IP 地址查询出 MAC 地址，然后将 MAC 地址写入 MAC 头部。
+
+内网与互联网连接需要地址转换。地址转换的基本原理是在转发网络包时对 IP 头部中的 IP 地址和端口号进行改写。因为公网IP只有一个，所以要根据不同的端口号区分内网不同的私有地址，路由器会保存私有地址与端口号对应的记录。如果私有地址和端口号没有保存在对应表中，外网是无法访问私有地址的，除非手动添加记录。
+
+路由器的包过滤就是在对包进行转发时，根据 MAC 头部、IP 头部、TCP 头部的内容，按照事先设置好的规则决定是转发这个包，还是丢弃这个包。
+
+![ip_change](.img/net/ip_change.bmp)
+
+
+
+
+```shell
+# 显示当前路由
+route -n
+
+# 其中Flags为路由标志，标记当前网络节点的状态，Flags标志说明：
+U Up表示此路由当前为启动状态。
+H Host，表示此网关为一主机。
+G Gateway，表示此网关为一路由器。
+R Reinstate Route，使用动态路由重新初始化的路由。
+D Dynamically,此路由是动态性地写入。
+M Modified，此路由是由路由守护程序或导向器动态修改。
+! 表示此路由当前为关闭状态。
+
+# 添加和设置网关
+route add -net 192.168.1.0 netmask 255.255.255.0 dev eth0
+route del -net 192.168.1.0 netmask 255.255.255.0 dev eth0
+
+# 屏蔽一条路由
+route add -net 10.0.0.0 netmask 255.0.0.0 reject
+route del -net 10.0.0.0 netmask 255.0.0.0 reject
+
+# 删除和添加默认网关
+route add default gw 192.168.1.2 eth0
+route del default gw 192.168.1.2 eth0
+```
+可以在/etc/rc.local中添加route命令来保证该路由设置永久有效。
+
+
+
+## 集线器
+集线器是根据以太网协议工作的设备，集线器里有一张以太网协议的表，根据以太网头部中记录的目的地信息查出相应的传输方向，在子网中将网络包传输到下一个转发设备。
+
+集线器将信号广播给所有连接到它网络。集线器的接口中有一个 MDI/MDI-X 切换开关，MDI 就是对 RJ-45 接口和信号收发模块进行直连接线，而 MDI-X 则是交叉接线。
+
+集线器工作在半双工模式。
+
+
+
+## 交换机
+交换机将网络包原样转发到目的地，交换机根据 MAC 地址表查找 MAC 地址，然后将信号发送到相
+应的端口。交换机端口的 MAC 模块不具有 MAC 地址。交换机工作在全双工模式。
+
+![](.img/net/switch.png)
+
+交换机会自行更新或删除地址表中的记录，当收到包时会将发送方 MAC 地址以及其输入端口的号码写入MAC 地址表中，当端口上的设备长时间不工作，就会删除记录。
+
+
+## DHCP
+### udhcpc
+默认的目录文件是/usr/share/udhcpc/default.script，当udhcpc 取得了IP地址之后，会把从DHCP server 得到的信息带入 script执行。
+```
+#!/bin/sh
+# udhcpc script edited by Tim Riker <Tim@Rikers.org>
+
+RESOLV_CONF="/etc/resolv.conf"
+
+[ -n "$1" ] || { echo "Error: should be called from udhcpc"; exit 1; }
+
+NETMASK=""
+[ -n "$subnet" ] && NETMASK="netmask $subnet"
+BROADCAST="broadcast +"
+[ -n "$broadcast" ] && BROADCAST="broadcast $broadcast"
+
+case "$1" in
+        deconfig)
+                echo "Setting IP address 0.0.0.0 on $interface"
+                ifconfig $interface 0.0.0.0
+                ;;
+
+        renew|bound)
+                echo "Setting IP address $ip on $interface"
+                ifconfig $interface $ip $NETMASK $BROADCAST
+
+                if [ -n "$router" ] ; then
+                        echo "Deleting routers"
+                        while route del default gw 0.0.0.0 dev $interface ; do
+                                :
+                        done
+
+                        metric=0
+                        for i in $router ; do
+                                echo "Adding router $i"
+                                route add default gw $i dev $interface metric $metric
+                                : $(( metric += 1 ))
+                        done
+                fi
+
+                echo "Recreating $RESOLV_CONF"
+                # If the file is a symlink somewhere (like /etc/resolv.conf
+                # pointing to /run/resolv.conf), make sure things work.
+                realconf=$(readlink -f "$RESOLV_CONF" 2>/dev/null || echo "$RESOLV_CONF")
+                tmpfile="$realconf-$$"
+                > "$tmpfile"
+                [ -n "$domain" ] && echo "search $domain" >> "$tmpfile"
+                for i in $dns ; do
+                        echo " Adding DNS server $i"
+                        echo "nameserver $i" >> "$tmpfile"
+                done
+                mv "$tmpfile" "$realconf"
+                ;;
+esac
+
+exit 0
+```
+
+
+
+
+
+## 入网
+BAS(Broadband Access Server)，宽带接入服务器。
+
+FTTH: Fiber To The Home,光纤到户。
+
+### ADSL
+ADSL: Asymmetric Digital Subscriber Line，不对称数字用户线。它是一种利用架设在电线杆上的金属电话线来进行高速通信的技术，它的上行方向(用户到互联网)和下行方向(互联网到用户)的通信速率是不对称的。
+
+用 户 端 路 由 器 D发 出 的 网 络 包 通 过 ADSL Modem调制解调器和电话线到达电话局，然后到达 ADSL 的网络运营商(即 ISP，互联网服务提供商)。
+
+互联网接入路由器会在网络包前面加上 MAC 头部、PPPoE 头部、PPP 头 部，然 后 发 送 给 ADSL Modem。ADSL Modem 将包拆分成信元，并调制成电信号发送给分离器。分离器负责将电话和 ADSL 的信号进行分离。
+
+![eth_if](.img/net/modem.png)
+
+ADSL采用的调制方式是振幅调制(ASK)和相位调制(PSK)相结合的正交振幅调制(QAM)方式。ADSL 使用间隔为 4.3125 kHz 的上百个不同频率的波进行合成，每个波都采用正交振幅调制。
+
+![eth_if](.img/net/modem2.png)
+
+
+
+
+## ppp
+PPP (Point-to-Point Protocol)，点到点协议。用户向运营商的接入点拨打电话，,电话接通后，输入用户名和密码进行登录操作。用户名和密码通过 RADIUS 协议从 RAS 发送到认证服务器，认证服务器校验这些信息是否正确。当确认无误后,认证服务器会返回 IP 地址等配置信息，为计算机分配一个公有地址。
+
+PPPoE 是将 PPP 消息装入以太网包进行传输的方式。PPP 协议中没有定义以太网中的报头和 FCS 等元素，也没有定义信号的格式，因此无法直接将 PPP 消息转换成信号来发送。
