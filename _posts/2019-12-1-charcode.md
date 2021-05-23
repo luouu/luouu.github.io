@@ -1,7 +1,7 @@
 ---
 layout: post
 title:  字符编码
-categories: 
+categories: [c]
 description: 
 keywords: 
 topmost: false

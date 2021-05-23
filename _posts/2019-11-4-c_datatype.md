@@ -26,7 +26,7 @@ topmost: false
 1. 格式化打印，long使用%ld或%lx，指针使用%p
 2. 对于long类型，常量要加L，如：long a = 1L<<32
 3. ssize_t在32位机器上等同与int，在64位机器上等同与long，size_t是无符号型的ssize_t。
-4. 指针+1 = p + sizeof(p指向的数据类型)。sizeof(p)在32位机器上永远是4字节，64位机器上是8字节。
+4. 指针大小在32位机器上是4字节，64位是8字节。指针p+1 = p + sizeof(p指向的数据类型)。
 
 stdint.h 里定义了一些数据类型的别名和范围。
 

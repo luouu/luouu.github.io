@@ -12,16 +12,15 @@ topmost: false
 
 [下载地址](https://busybox.net/downloads/)
 
-https://salsa.debian.org/installer-team/busybox
+[https://salsa.debian.org/installer-team/busybox](https://salsa.debian.org/installer-team/busybox)
 
-1.修改顶层Makefile，修改交叉编译器和硬件平台：
+修改顶层Makefile，修改交叉编译器和芯片平台：
 
->CROSS_COMPILE = arm-none-linux-gnueabi-
->ARCH = arm
+>CROSS_COMPILE = arm-none-linux-gnueabi- ARCH = arm
 
-2. `make defconfig`，busybox提供了3种配置：defconfig (缺省配置)、allyesconfig（最大配置）、 allnoconfig（最小配置）。
+`make defconfig`，busybox提供了3种配置：defconfig (缺省配置)、allyesconfig（最大配置）、 allnoconfig（最小配置）。
 
-3. `make menuconfig` 配置
+`make menuconfig`
 
 ```conf
 Busybox Settings  --->
@@ -41,7 +40,6 @@ Busybox Settings  --->
       [*]   Tab completion (NEW)   // 支持Tab补全操作
 ```
 
-`make`; `make install`
+`make; make install`
 
-4.　添加相应的库
-用`readelf -d busybox`，查看依赖的库，将交叉编译环境下sysroot/lib目录下库拷贝到/lib。
+添加相应的库，用`readelf -d busybox`，查看依赖的库，将交叉编译环境下sysroot/lib目录下库拷贝到/lib。
