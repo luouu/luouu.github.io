@@ -5,7 +5,7 @@ baseurl:
 url: 
 date_format: "ordinal"
 title: linux class
-subtitle: "种树最好的时间是十年前 其次是现在"
+subtitle: "吾生也有涯 而知也无涯"
 description: "GitHub - luo_u个人博客"
 keywords: luo_u linux
 timezone: '+0800'
@@ -91,7 +91,8 @@ paginate: 20
 lsi: false
 quiet: false
 excerpt_separator: "\n\n"
-permalink: /:year/:month/:day/:title/
+# permalink: /:year/:month/:day/:title/
+permalink: /:categories/:title/
 plugins_dir:
     - jekyll-github-metadata
     - rouge
@@ -107,9 +108,6 @@ collections:
         output: true
         permalink: /cmd/:path/
 
-    tool:
-        output: true
-        permalink: /tool/:path/
 
 # ---------------- #
 #      Comments    #

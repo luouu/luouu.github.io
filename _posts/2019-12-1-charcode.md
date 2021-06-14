@@ -13,7 +13,7 @@ topmost: false
 ## 字符编码
 
 中文编码有ASCII，GB2312，GBK和GB18030编码。兼容性关系是GB18030兼容GBK，GBK兼容GB2312，GB2312兼容ASCII。
-![](/images/char_code.jpg)
+![](/images/app/char_code.jpg)
 从图中我们可以一目了然地看到为什么GB18030可以兼容GBK，GB2312和ASCII了。他们几种编码之间前两位没有重合部分。需要注意的是ASCII只有1byte，所以是没有第二位的。另外GB18030在上图中占的面积虽然很小，但是它是4bytes编码，这图只展示了前两位。如果后两位也算上，GB18030的字数要远多于GBK。由于GBK兼容GB2312，因此属于GB2312的蓝色区域其实也可以算作是GBK的区域。同理GBK的区域理论上也属于GB18030的区域。上表中只是展示了多出来的部分。
 
 ### ASCII

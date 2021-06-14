@@ -16,7 +16,7 @@ topmost: false
 
 修改顶层Makefile，修改交叉编译器和芯片平台：
 
->CROSS_COMPILE = arm-none-linux-gnueabi- ARCH = arm
+>CROSS_COMPILE=arm-none-linux-gnueabi- ARCH=arm
 
 `make defconfig`，busybox提供了3种配置：defconfig (缺省配置)、allyesconfig（最大配置）、 allnoconfig（最小配置）。
 

@@ -1,7 +1,7 @@
 ---
 layout: cmd
 title: linux命令
-subtitle: 磨刀不误砍柴工
+subtitle: 学不可以已
 keywords: 命令, cmd
 comments: ture
 menu: 命令
